@@ -1,9 +1,6 @@
-import React, { Component } from 'react'
-import { PanResponder, Text, View, Dimensions, Animated } from 'react-native'
+import React from 'react'
 import PropTypes from 'prop-types'
-
-import isEqual from 'lodash.isequal'
-
+import { PanResponder, Text, View, Dimensions, Animated } from 'react-native'
 import styles from './styles'
 
 const { height, width } = Dimensions.get('window')
@@ -15,7 +12,7 @@ const LABEL_TYPES = {
   BOTTOM: 'bottom'
 }
 
-class Swiper extends Component {
+class Swiper extends React.Component {
   constructor (props) {
     super(props)
 
@@ -34,10 +31,6 @@ class Swiper extends Component {
   }
 
   componentWillReceiveProps (newProps) {
-    if (isEqual(newProps, this.props)) {
-      return
-    }
-
     this.setState({
       ...this.calculateCardIndexes(newProps.cardIndex, newProps.cards),
       cards: newProps.cards,
@@ -102,9 +95,9 @@ class Swiper extends Component {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
         const isVerticalSwipe = Math.sqrt(
           Math.pow(gestureState.dx, 2) < Math.pow(gestureState.dy, 2)
-        )
+        );
         if (!this.props.verticalSwipe && isVerticalSwipe) {
-          return false
+          return false;
         }
         return Math.sqrt(Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2)) > 10
       },
@@ -275,17 +268,11 @@ class Swiper extends Component {
 
     if (isSwipingRight) {
       return onSwipedRight
-    }
-
-    if (isSwipingLeft) {
+    } else if (isSwipingLeft) {
       return onSwipedLeft
-    }
-
-    if (isSwipingTop) {
+    } else if (isSwipingTop) {
       return onSwipedTop
-    }
-
-    if (isSwipingBottom) {
+    } else if (isSwipingBottom) {
       return onSwipedBottom
     }
   }
@@ -626,10 +613,9 @@ class Swiper extends Component {
   renderFirstCard = () => {
     const { firstCardIndex } = this.state
     const { cards } = this.props
-
     const swipableCardStyle = this.calculateSwipableCardStyle()
     const firstCardContent = cards[firstCardIndex]
-    const firstCard = this.props.renderCard(firstCardContent)
+    const firstCard = this.props.renderCard(firstCardContent, firstCardIndex)
     const renderOverlayLabel = this.renderOverlayLabel()
 
     const notInfinite = !this.props.infinite
@@ -640,7 +626,7 @@ class Swiper extends Component {
     return (
       <Animated.View
         style={swipableCardStyle}
-        key={firstCardIndex}
+        key={cards[firstCardIndex].user.uid}
         {...this._panResponder.panHandlers}
       >
         {renderOverlayLabel}
@@ -655,17 +641,17 @@ class Swiper extends Component {
 
     const secondCardZoomStyle = this.calculateSecondCardZoomStyle()
     const secondCardContent = cards[secondCardIndex]
-    const secondCard = renderCard(secondCardContent)
+    const secondCard = renderCard(secondCardContent, secondCardIndex)
 
     const notInfinite = !this.props.infinite
     const lastCardOrSwipedAllCards =
       secondCardIndex === 0 || this.state.swipedAllCards
     if (notInfinite && lastCardOrSwipedAllCards) {
-      return <Animated.View key={secondCardIndex} />
+      return <Animated.View key={cards[secondCardIndex].user.uid} />
     }
 
     return (
-      <Animated.View key={secondCardIndex} style={secondCardZoomStyle}>
+      <Animated.View key={cards[secondCardIndex].user.uid} style={secondCardZoomStyle}>
         {secondCard}
       </Animated.View>
     )
@@ -677,9 +663,8 @@ class Swiper extends Component {
     const previousCardContent = cards[previousCardIndex]
     const previousCardStyle = this.calculateSwipeBackCardStyle()
     const previousCard = this.props.renderCard(previousCardContent)
-
     return (
-      <Animated.View key={previousCardIndex} style={previousCardStyle}>
+      <Animated.View key={cards[previousCardIndex].user.uid} style={previousCardStyle}>
         {previousCard}
       </Animated.View>
     )

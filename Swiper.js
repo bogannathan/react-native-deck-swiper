@@ -652,6 +652,7 @@ class Swiper extends React.Component {
 
     return (
       <Animated.View key={cards[secondCardIndex].user.uid} style={secondCardZoomStyle}>
+        {null}
         {secondCard}
       </Animated.View>
     )
@@ -665,6 +666,7 @@ class Swiper extends React.Component {
     const previousCard = this.props.renderCard(previousCardContent)
     return (
       <Animated.View key={cards[previousCardIndex].user.uid} style={previousCardStyle}>
+        {null}
         {previousCard}
       </Animated.View>
     )
